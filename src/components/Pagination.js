@@ -15,14 +15,13 @@ export function Pagination() {
   useEffect(() => {
     const createdPages = Array.from({ length: info.pages }, (_, i) => {
       const URLWithPage = new URL(apiURL);
-
       URLWithPage.searchParams.set('page', i + 1);
 
       return URLWithPage;
     });
 
     setPages(createdPages);
-  }, [info]);
+  }, [info, apiURL]);
 
   if (pages.length <= 1) return null;
 
