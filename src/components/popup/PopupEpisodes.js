@@ -11,22 +11,32 @@ export function PopupEpisodes({ episodes }) {
 
   useEffect(() => {
     if (!episodes?.length) {
+      setIsFetching(false);
+
       return;
     }
 
     setIsFetching(true);
 
+    const controller = new AbortController();
+
     const episodesIds = episodes.map((ep) => ep.match(/\d+$/)[0]);
 
     axios
-      .get(`${API_EPISODES_URL}/${episodesIds.join(',')}`)
+      .get(`${API_EPISODES_URL}/${episodesIds.join(',')}`, {
+        signal: controller.signal
+      })
       .then(({ data }) => {
-        if (episodes.length === 1) {
-          setSeries([data]);
-        } else {
-          setSeries(data);
-        }
+        setSeries(Array.isArray(data) ? data : [data]);
+        setIsFetching(false);
+      })
+      .catch((e) => {
+        if (axios.isCancel(e)) return;
+        console.error(e);
+        setIsFetching(false);
       });
+
+    return () => controller.abort();
   }, [episodes]);
 
   if (isFetching) {
@@ -39,7 +49,7 @@ export function PopupEpisodes({ episodes }) {
 
       <StyledPopupEpisodes _length={series.length}>
         {series?.map(({ id, name, episode }) => (
-          <Episode key={id} _length={series.length}>
+          <Episode key={id}>
             <EpisodeMarking>
               {episode
                 .replace(/S0?(\d+)/, 'Season $1 - ')
@@ -54,7 +64,6 @@ export function PopupEpisodes({ episodes }) {
 }
 
 const PopupEpisodesContainer = styled.div``;
-
 const StyledPopupEpisodes = styled.div`
   display: flex;
   flex-direction: column;
@@ -62,25 +71,21 @@ const StyledPopupEpisodes = styled.div`
   ${({ _length }) =>
     _length > 20 &&
     css`
-      display: grid;
-      grid-auto-flow: column;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: repeat(
-        ${window.screen.width < 600 ? _length : Math.ceil(_length / 2)},
-        1fr
-      );
+      @media (min-width: 600px) {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(
+          ${({ _length }) => Math.ceil(_length / 2)},
+          1fr
+        );
 
-      & p {
-        width: 95%;
-        border-bottom: 2px solid #eee;
+        & p {
+          width: 95%;
+          border-bottom: 2px solid #eee;
+        }
       }
-
-      & span {
-        margin-bottom: ${window.screen.width < 600 ? '10px' : 0};
-      }
-    `};
-
-  ${window.screen.width < 600 && 'grid-template-columns: 1fr'};
+    `}
 `;
 
 const Episode = styled.p`
