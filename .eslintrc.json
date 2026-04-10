@@ -12,11 +12,22 @@
     "import/no-default-export": "error",
     "no-unused-vars": ["warn", { "vars": "all", "args": "after-used" }],
     "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "import/no-unused-modules": ["warn", { "unusedExports": true }],
+    "import/no-unused-modules": [
+      "warn",
+      {
+        "unusedExports": true,
+        "ignoreExports": [
+          "src/index.js",
+          "src/components/index.js",
+          "src/components/Card/index.js",
+          "src/components/Card/Card.styles.js"
+        ]
+      }
+    ],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
     "react/no-array-index-key": "warn",
-    "react/jsx-no-bind": ["warn", { "ignoreRefs": true }], 
+    "react/jsx-no-bind": ["warn", { "ignoreRefs": true }],
     "padding-line-between-statements": [
       "error",
       { "blankLine": "always", "prev": "*", "next": "return" },
