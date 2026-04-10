@@ -7,7 +7,7 @@ Gallery of Rick and Morty characters built with React and Rick and Morty API.
 **Requirements:** Node.js 16+
 
 ```bash
-git clone https://github.com/ledneev/elfsight-test-taks
+git clone git@github.com:ledneev/elfsight-test-taks.git
 cd your-repo
 npm install
 npm start
